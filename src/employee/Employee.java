@@ -45,9 +45,10 @@ public class Employee {
     }
 
     public void setFirstName(String firstName) {
-        if (firstName != null && !firstName.trim().isEmpty()) {
+        if (firstName != null && !firstName.trim().isEmpty()&& firstName.matches("[a-zA-Z]+")) {
             this.firstName = firstName;
-        } else {
+        }
+      else {
             System.out.println("Invalid first name");
         }
     }
@@ -57,7 +58,7 @@ public class Employee {
     }
 
     public void setLastName(String lastName) {
-        if (lastName != null && !lastName.trim().isEmpty()) {
+        if (lastName != null && !lastName.trim().isEmpty()&& lastName.matches("[a-zA-Z]+")) {
             this.lastName = lastName;
         } else {
             System.out.println("Invalid last name");
