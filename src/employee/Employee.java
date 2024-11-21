@@ -35,18 +35,10 @@ public class Employee {
         }
     }
 
-//    public Scanner getInput() {
-//        return input;
-//    }
-
-//    public void setInput(Scanner input) {
-//        this.input = input;
-//    }
 
     private int Salary;
 
 
-//    Scanner input = new Scanner(System.in);
 
     public String getFirstName() {
         return firstName;
@@ -102,22 +94,37 @@ public class Employee {
 
     public void setNumber(String countryCode, String number) {
         PhoneValidationHelper helper = new PhoneValidationHelper();
+
+        String prefix = helper.getPhonePrefix(countryCode);
         int requiredLength = helper.getPhoneNumberLength(countryCode);
 
-        if (requiredLength == -1) {
+        if (prefix == null || requiredLength == -1) {
             System.out.println("Invalid country code.");
             this.number = 0;
             return;
         }
-
-        String pattern = "^\\+?" + countryCode + "\\d{" + requiredLength + "}$";
-        if (number.matches(pattern)) {
-            this.number = Long.parseLong(number.replaceAll("\\D", ""));
-        } else {
+        String normalizeNumber= number.replaceAll("\\s+","");
+        if(!normalizeNumber.startsWith(prefix)){
             System.out.println("Invalid phone number. It must match the country-specific format.");
             this.number = 0;
         }
+        String numberWithoutPrefix = normalizeNumber.substring(prefix.length());
+        if(numberWithoutPrefix.length()==requiredLength&& numberWithoutPrefix.matches("\\d+")){
+            this.number =Long.parseLong(numberWithoutPrefix);
+        }else {
+            System.out.println("Invalid phone number. It must match the country-specific format.");
+            this.number = 0;
+        }
+
+//        String pattern = "^" + prefix + "\\d{" + requiredLength + "}$";
+//        if (number.matches(pattern)) {
+//            this.number = Long.parseLong(number.replaceAll("\\D", ""));
+//        } else {
+//            System.out.println("Invalid phone number. It must match the country-specific format.");
+//            this.number = 0;
+//        }
     }
+
 
     public String getDepartment() {
         return department;
