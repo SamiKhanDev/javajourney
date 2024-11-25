@@ -1,6 +1,42 @@
 package employee;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.util.Properties;
+
+
 public class Employee {
+    public String getDob() {
+        return dob;
+    }
+
+
+
+    public boolean setDob(String dob) {
+        try {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            LocalDate dateOfBirth = LocalDate.parse(dob, formatter);
+
+            if (dateOfBirth.isAfter(LocalDate.now())) {
+                System.out.println("Invalid date of birth. Date cannot be in the future.");
+                return false;
+            } else {
+                this.dob = dob;
+                System.out.println("Date of birth set successfully.");
+                return true;
+            }
+        } catch (DateTimeParseException e) {
+            System.out.println("Invalid date format. Please use yyyy-MM-dd.");
+            return false;
+        }
+    }
+
+
+
+    private String dob;
     private String firstName;
     private String lastName;
     private int age;
@@ -81,50 +117,90 @@ public class Employee {
         return email;
     }
 
+
     public void setEmail(String email) {
-        if (email != null && email.contains("@") && email.contains(".")) {
+        String regex = getRegexFromProperties("email.regex");
+        if (regex != null && email != null && email.matches(regex)) {
             this.email = email;
         } else {
-            System.out.println("Invalid email");
+            System.out.println("Invalid email format.");
         }
     }
+
+    private String getRegexFromProperties(String key) {
+        Properties properties = new Properties();
+        try (InputStream input = getClass().getClassLoader().getResourceAsStream("employee/phone_validation.properties")) {
+            if (input == null) {
+                System.out.println("Unable to find config.properties");
+                return null;
+            }
+            properties.load(input);
+            return properties.getProperty(key);
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.out.println("Error loading properties file.");
+            return null;
+        }
+    }
+
+
 
     public long getNumber() {
         return number;
     }
-
     public void setNumber(String countryCode, String number) {
         PhoneValidationHelper helper = new PhoneValidationHelper();
 
-        String prefix = helper.getPhonePrefix(countryCode);
-        int requiredLength = helper.getPhoneNumberLength(countryCode);
-
-        if (prefix == null || requiredLength == -1) {
-            System.out.println("Invalid country code.");
+        if (!helper.isValidPhoneNumber(countryCode, number)) {
+            System.out.println("Invalid phone number. It must match the country-specific format.");
             this.number = 0;
             return;
         }
-        String normalizeNumber= number.replaceAll("\\s+","");
-        if(!normalizeNumber.startsWith(prefix)){
-            System.out.println("Invalid phone number. It must match the country-specific format.");
-            this.number = 0;
-        }
-        String numberWithoutPrefix = normalizeNumber.substring(prefix.length());
-        if(numberWithoutPrefix.length()==requiredLength&& numberWithoutPrefix.matches("\\d+")){
-            this.number =Long.parseLong(numberWithoutPrefix);
-        }else {
-            System.out.println("Invalid phone number. It must match the country-specific format.");
-            this.number = 0;
+
+        // Strip country code for storage
+        if (number.startsWith("+92")) {
+            number = number.substring(3);
+        } else if (number.startsWith("92")) {
+            number = number.substring(2);
+        } else if (number.startsWith("0")) {
+            number = number.substring(1);
         }
 
-//        String pattern = "^" + prefix + "\\d{" + requiredLength + "}$";
-//        if (number.matches(pattern)) {
-//            this.number = Long.parseLong(number.replaceAll("\\D", ""));
-//        } else {
+        this.number = Long.parseLong(number.replaceAll("\\D", ""));
+    }
+
+//    public void setNumber(String countryCode, String number) {
+//        PhoneValidationHelper helper = new PhoneValidationHelper();
+//
+//        String prefix = helper.getPhonePrefix(countryCode);
+//        int requiredLength = helper.getPhoneNumberLength(countryCode);
+//
+//        if (prefix == null || requiredLength == -1) {
+//            System.out.println("Invalid country code.");
+//            this.number = 0;
+//            return;
+//        }
+//        String normalizeNumber= number.replaceAll("\\s+","");
+//        if(!normalizeNumber.startsWith(prefix)){
 //            System.out.println("Invalid phone number. It must match the country-specific format.");
 //            this.number = 0;
 //        }
-    }
+//        String numberWithoutPrefix = normalizeNumber.substring(prefix.length());
+//        if(numberWithoutPrefix.length()==requiredLength&& numberWithoutPrefix.matches("\\d+")){
+//            this.number =Long.parseLong(numberWithoutPrefix);
+//        }else {
+//            System.out.println("Invalid phone number. It must match the country-specific format.");
+//            this.number = 0;
+//        }
+//
+////        String pattern = "^" + prefix + "\\d{" + requiredLength + "}$";
+////        if (number.matches(pattern)) {
+////            this.number = Long.parseLong(number.replaceAll("\\D", ""));
+////        } else {
+////            System.out.println("Invalid phone number. It must match the country-specific format.");
+////            this.number = 0;
+////        }
+//    }
 
 
     public String getDepartment() {
