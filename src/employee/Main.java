@@ -13,6 +13,26 @@ public class Main {
         PhoneValidationHelper helper = new PhoneValidationHelper();
         DatabaseConnector db = new DatabaseConnector();
         System.out.println("Enter employee details:");
+        while (true) {
+            System.out.print("Country Code (e.g., PK): ");
+            String countryCode = input.nextLine().toUpperCase();
+
+            if (!countryCode.equals("PK")) {
+                System.out.println("Only PK country code is supported.");
+                continue;
+            }
+
+            System.out.print("Phone Number: ");
+            String phoneNumber = input.nextLine();
+
+            if (helper.isValidPhoneNumber(countryCode, phoneNumber)) {
+                employee.setNumber(countryCode, phoneNumber);
+                break;
+            } else {
+                System.out.println("Invalid phone number format for " + countryCode + ". Please try again.");
+            }
+        }
+
         employee.setId(Integer.parseInt(getValidInput(input, "ID: ", "\\d+", "ID must be numeric.")));
         employee.setFirstName(getValidInput(input, "First Name: ", "[a-zA-Z]+", "Only alphabets are allowed."));
         employee.setLastName(getValidInput(input, "Last Name: ", "[a-zA-Z]+", "Only alphabets are allowed."));
@@ -36,26 +56,26 @@ public class Main {
                 break;
             }
         }
-//        while (true) {
-//            System.out.print("Country Code (e.g., PK): ");
-//            String countryCode = input.nextLine().toUpperCase();
-//
-//            if (!countryCode.equals("PK")) {
-//                System.out.println("Only PK country code is supported.");
-//                continue;
-//            }
-//
-//            System.out.print("Phone Number: ");
-//            String phoneNumber = input.nextLine();
-//
-//            if (helper.isValidPhoneNumber(countryCode, phoneNumber)) {
-//                employee.setNumber(countryCode, phoneNumber);
-//                System.out.println("Phone number set successfully!");
-//                break;
-//            } else {
-//                System.out.println("Invalid phone number format for " + countryCode + ". Please try again.");
-//            }
-//        }
+        while (true) {
+            System.out.print("Country Code (e.g., PK): ");
+            String countryCode = input.nextLine().toUpperCase();
+
+            if (!countryCode.equals("PK")) {
+                System.out.println("Only PK country code is supported.");
+                continue;
+            }
+
+            System.out.print("Phone Number: ");
+            String phoneNumber = input.nextLine();
+
+            if (helper.isValidPhoneNumber(countryCode, phoneNumber)) {
+                employee.setNumber(countryCode, phoneNumber);
+                break;
+            } else {
+                System.out.println("Invalid phone number format for " + countryCode + ". Please try again.");
+            }
+        }
+
 
 //        while (true) {
 //            System.out.print("Age: ");
