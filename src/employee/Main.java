@@ -2,42 +2,76 @@ package employee;
 
 import database.DatabaseConnector;
 
-import java.sql.SQLException;
 import java.util.Scanner;
 
-
 public class Main {
-    public static void main(String[] args) throws SQLException {
-        Employee employee = new Employee();
+    public static void main(String[] args) {
         Scanner input = new Scanner(System.in);
         PhoneValidationHelper helper = new PhoneValidationHelper();
         DatabaseConnector db = new DatabaseConnector();
-        System.out.println("Enter employee details:");
+
         while (true) {
-            System.out.print("Country Code (e.g., PK): ");
-            String countryCode = input.nextLine().toUpperCase();
+            System.out.println("\nChoose an option:");
+            System.out.println("1. Add New Employee");
+            System.out.println("2. View Employee Table");
+            System.out.println("3. Update Employee");
+            System.out.println("4. Delete Employee");
+            System.out.println("5. Exit");
 
-            if (!countryCode.equals("PK")) {
-                System.out.println("Only PK country code is supported.");
-                continue;
-            }
+            System.out.print("Enter your choice: ");
+            int choice = Integer.parseInt(input.nextLine());
 
-            System.out.print("Phone Number: ");
-            String phoneNumber = input.nextLine();
+            switch (choice) {
+                case 1:
+                    addNewEmployee(input, helper, db);
+                    break;
 
-            if (helper.isValidPhoneNumber(countryCode, phoneNumber)) {
-                employee.setNumber(countryCode, phoneNumber);
-                break;
-            } else {
-                System.out.println("Invalid phone number format for " + countryCode + ". Please try again.");
+                case 2:
+                    System.out.println("Employee Table:");
+                    db.fetchEmployees();
+                    break;
+
+                case 3:
+                    System.out.println("Enter the ID of the employee to update:");
+                    int employeeIdToUpdate = Integer.parseInt(input.nextLine());
+
+                    System.out.println("Which field would you like to update?");
+                    System.out.println("Options: first_name, last_name, email, department, age, dob, permanent_address, temporary_address");
+                    String fieldToUpdate = input.nextLine().toLowerCase();
+
+                    System.out.println("Enter the new value for " + fieldToUpdate + ": ");
+                    String newValue = input.nextLine();
+
+                    Employee employeeToUpdate = new Employee();
+                    employeeToUpdate.setId(employeeIdToUpdate);
+                    db.updateEmployeeField(employeeToUpdate, fieldToUpdate, newValue);
+                    break;
+
+                case 4:
+                    System.out.println("Enter the ID of the employee to delete:");
+                    int employeeIdToDelete = Integer.parseInt(input.nextLine());
+                    db.deleteEmployeeField(employeeIdToDelete);
+                    break;
+
+                case 5:
+                    System.out.println("Exit");
+                    return;
+
+                default:
+                    System.out.println("Invalid choice");
             }
         }
+    }
 
+    public static void addNewEmployee(Scanner input, PhoneValidationHelper helper, DatabaseConnector db) {
+        Employee employee = new Employee();
+
+        System.out.println("\nEnter employee details:");
         employee.setId(Integer.parseInt(getValidInput(input, "ID: ", "\\d+", "ID must be numeric.")));
         employee.setFirstName(getValidInput(input, "First Name: ", "[a-zA-Z]+", "Only alphabets are allowed."));
         employee.setLastName(getValidInput(input, "Last Name: ", "[a-zA-Z]+", "Only alphabets are allowed."));
         employee.setAge(Integer.parseInt(getValidInput(input, "Age: ", "\\d+", "Age must be a number.")));
-        employee.setDepartment(getInput(input,"Department: "));
+        employee.setDepartment(getInput(input, "Department: "));
         employee.getAddress().setPermanentAddress(getInput(input, "Permanent Address: "));
         employee.getAddress().setTemporaryAddress(getInput(input, "Temporary Address: "));
 
@@ -46,7 +80,6 @@ public class Main {
             String email = input.nextLine();
             employee.setEmail(email);
             if (employee.getEmail() != null) break;
-
         }
 
         while (true) {
@@ -56,6 +89,7 @@ public class Main {
                 break;
             }
         }
+
         while (true) {
             System.out.print("Country Code (e.g., PK): ");
             String countryCode = input.nextLine().toUpperCase();
@@ -76,109 +110,23 @@ public class Main {
             }
         }
 
-
-//        while (true) {
-//            System.out.print("Age: ");
-//            if (input.hasNextInt()) {
-//                int age = input.nextInt();
-//                input.nextLine();
-//                employee.setAge(age);
-//                if (employee.getAge() != 0) break;
-//            } else {
-//                System.out.println("Invalid input. Age must be a number.");
-//                input.nextLine();
-//            }
-//        }
-
-//        employee.setEmail(getValidInput(input,"Email: ",".+","email cannot be empty"));
-
-//        while (true) {
-////            Scanner address= new Scanner(System.in);
-//            System.out.println("enter the permanent address: ");
-//            employee.getAddress().setPermanentAddress(input.nextLine());
-//            break;
-//        }
-
-//        while (true) {
-//            Scanner address2 = new Scanner(System.in);
-//            System.out.print("enter the temporary address: ");
-//            employee.getAddress().setTemporaryAddress(address2.nextLine());
-//            break;
-//        }
-
-//        while (true) {
-//            System.out.print("Department: ");
-//            String department = input.nextLine();
-//            employee.setDepartment(department);
-//            if (employee.getDepartment() != null) break;
-//        }
-
-//        while (true) {
-//            System.out.print("ID: ");
-//            if (input.hasNextInt()) {
-//                int id = input.nextInt();
-//                input.nextLine();
-//                employee.setId(id);
-//                if (employee.getId() != 0) break;
-//            } else {
-//                System.out.println("Invalid input. ID must be numeric.");
-//                input.next();
-//            }
-//        }
-        System.out.println("\nEmployee Details:");
-        System.out.println("First Name: " + employee.getFirstName());
-        System.out.println("Last Name: " + employee.getLastName());
-        System.out.println("Age: " + employee.getAge());
-        System.out.println("Email: " + employee.getEmail());
-//        System.out.println("Phone Number: " + employee.getNumber());
-        System.out.println("permanent address: " + employee.getAddress().getPermanentAddress());
-        System.out.println("temporary address: " + employee.getAddress().getTemporaryAddress());
-        System.out.println("Department: " + employee.getDepartment());
-        System.out.println("ID: " + employee.getId());
-
         db.insertEmployee(employee);
-        System.out.println("Employee inserted successfully. Would you like to update a field? (yes/no)");
-        String updateChoice = input.nextLine();
-        if (updateChoice.equalsIgnoreCase("yes")) {
-            System.out.println("Enter the ID of the employee to update:");
-            int employeeIdToUpdate = Integer.parseInt(input.nextLine());
-
-            System.out.println("Which field would you like to update?");
-            System.out.println("Options: first_name, last_name, email, department, age, dob, permanent_address, temporary_address");
-            String fieldToUpdate = input.nextLine().toLowerCase();
-
-            System.out.println("Enter the new value for " + fieldToUpdate + ": ");
-            String newValue = input.nextLine();
-
-            employee.setId(employeeIdToUpdate);
-
-            db.updateEmployeeField(employee, fieldToUpdate, newValue);
-        }
-
-        System.out.println("\nFetching employee from the database");
-        db.fetchEmployees();
+        System.out.println("Employee added successfully!");
     }
 
-
-
     public static String getInput(Scanner input, String title) {
-        while (true) {
-            System.out.print(title + "");
-            return input.nextLine();
-        }
+        System.out.print(title);
+        return input.nextLine();
     }
 
     public static String getValidInput(Scanner input, String title, String regex, String errorMessage) {
         while (true) {
-            System.out.print(title + "");
+            System.out.print(title);
             String value = input.nextLine();
             if (value.matches(regex)) {
                 return value;
             }
-            System.out.println("invalid input " + errorMessage);
-
-
+            System.out.println("Invalid input. " + errorMessage);
         }
-
     }
 }

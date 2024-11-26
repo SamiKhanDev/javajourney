@@ -23,14 +23,14 @@ public class PhoneValidationHelper {
     public boolean isValidPhoneNumber(String countryCode, String phoneNumber) {
         String regex = "";
         if (countryCode.equals("PK")) {
-            regex = "^((\\+92)|(0092))-{0,1}\\d{3}-{0,1}\\d{7}$|^\\d{11}$|^\\d{4}-\\d{7}$\n";
+            regex = "^(?:\\\\+92|0092)?(03[0-5]{2})-?[0-9]{7}$|^(?:\\\\+92|0092)?([0-9]{3})-?[0-9]{7}$\n";
         }
 
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(phoneNumber);
         boolean isValid = matcher.matches();
-        System.out.println("Using regex: " + regex + " for phone number: " + phoneNumber);
-        System.out.println("Regex match result: " + isValid);
+//        System.out.println("Using regex: " + regex + " for phone number: " + phoneNumber);
+//        System.out.println("Regex match result: " + isValid);
         return isValid;
     }
 
