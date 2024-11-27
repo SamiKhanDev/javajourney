@@ -8,6 +8,17 @@ public class DatabaseConnector {
     private static final String USER = "root";
     private static final String PASSWORD = "12345678";
 
+    public static DatabaseConnector instance;
+
+    public DatabaseConnector(){}
+
+    public static synchronized DatabaseConnector getInstance(){
+        if(instance==null){
+            instance = new DatabaseConnector();
+        }
+        return instance;
+    }
+
 //    static {
 //        try {
 //            Class.forName("com.mysql.cj.jdbc.Driver");

@@ -8,7 +8,7 @@ public class Main {
     public static void main(String[] args) {
         Scanner input = new Scanner(System.in);
         PhoneValidationHelper helper = new PhoneValidationHelper();
-        DatabaseConnector db = new DatabaseConnector();
+        DatabaseConnector db = DatabaseConnector.getInstance();
 
         while (true) {
             System.out.println("\nChoose an option:");
