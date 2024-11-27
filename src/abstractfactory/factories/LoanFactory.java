@@ -1,12 +1,9 @@
 package abstractfactory.factories;
 
 import abstractfactory.bank.Bank;
-import abstractfactory.bank.HomeLoan;
-import abstractfactory.loan.BuisnessLoan;
-import abstractfactory.loan.EducationLoan;
-import abstractfactory.loan.Loan;
+import abstractfactory.loan.*;
 
-class LoanFactory extends AbstractFactory{
+public class LoanFactory extends AbstractFactory {
            public Bank getBank(String bank){
                 return null;  
           }  

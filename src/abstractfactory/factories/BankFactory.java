@@ -1,12 +1,9 @@
 package abstractfactory.factories;
 
-import abstractfactory.bank.Bank;
-import abstractfactory.bank.HBL;
-import abstractfactory.bank.Islamic;
-import abstractfactory.bank.Meezan;
-import abstractfactory.loan.Loan;
+import abstractfactory.bank.*;
+import abstractfactory.loan.BuisnessLoan;
 
-class BankFactory extends AbstractFactory{
+class BankFactory extends AbstractFactory {
    public Bank getBank(String bank){
       if(bank == null){  
          return null;  
@@ -20,7 +17,7 @@ class BankFactory extends AbstractFactory{
       }  
       return null;  
    }  
-  public Loan getLoan(String loan) {
+  public BuisnessLoan getLoan(String loan) {
       return null;  
    }  
 }
