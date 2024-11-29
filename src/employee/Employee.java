@@ -6,9 +6,12 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 public class Employee {
+    private static final Logger log = Logger.getLogger(Employee.class.getName());
     public String getDob() {
         return dob;
     }
@@ -21,15 +24,15 @@ public class Employee {
             LocalDate dateOfBirth = LocalDate.parse(dob, formatter);
 
             if (dateOfBirth.isAfter(LocalDate.now())) {
-                System.out.println("Invalid date of birth. Date cannot be in the future.");
+                log.log(Level.WARNING,"Invalid date of birth. Date cannot be in the future.");
                 return false;
             } else {
                 this.dob = dob;
-                System.out.println("Date of birth set successfully.");
+           log.log(Level.INFO,"Date of birth set successfully.");
                 return true;
             }
         } catch (DateTimeParseException e) {
-            System.out.println("Invalid date format. Please use yyyy-MM-dd.");
+            log.log(Level.SEVERE,"Invalid date format. Please use yyyy-MM-dd.");
             return false;
         }
     }
@@ -85,7 +88,7 @@ public class Employee {
             this.firstName = firstName;
         }
       else {
-            System.out.println("Invalid first name");
+           log.log(Level.WARNING,"Invalid first name");
         }
     }
 
@@ -97,7 +100,7 @@ public class Employee {
         if (lastName != null && !lastName.trim().isEmpty()&& lastName.matches("[a-zA-Z]+")) {
             this.lastName = lastName;
         } else {
-            System.out.println("Invalid last name");
+            log.log(Level.WARNING,"Invalid last name");
         }
     }
 
@@ -109,7 +112,7 @@ public class Employee {
         if (age > 18 && age < 65) {
             this.age = age;
         } else {
-            System.out.println("Invalid age. Age should be between 18 and 65.");
+            log.log(Level.WARNING,"Invalid age. Age should be between 18 and 65.");
         }
     }
 
@@ -123,7 +126,7 @@ public class Employee {
         if (regex != null && email != null && email.matches(regex)) {
             this.email = email;
         } else {
-            System.out.println("Invalid email format.");
+            log.log(Level.WARNING,"Invalid email format.");
         }
     }
 
@@ -131,14 +134,14 @@ public class Employee {
         Properties properties = new Properties();
         try (InputStream input = getClass().getClassLoader().getResourceAsStream("employee/phone_validation.properties")) {
             if (input == null) {
-                System.out.println("Unable to find config.properties");
+               log.log(Level.WARNING,"Unable to find config.properties");
                 return null;
             }
             properties.load(input);
             return properties.getProperty(key);
         } catch (IOException e) {
             e.printStackTrace();
-            System.out.println("Error loading properties file.");
+           log.log(Level.SEVERE,"Error loading properties file.");
             return null;
         }
     }
@@ -152,7 +155,7 @@ public class Employee {
         PhoneValidationHelper helper = new PhoneValidationHelper();
 
         if (!helper.isValidPhoneNumber(countryCode, number)) {
-            System.out.println("Invalid phone number. It must match the country-specific format.");
+            log.log(Level.WARNING,"Invalid phone number. It must match the country-specific format.");
             this.number = 0;
             return;
         }
@@ -211,7 +214,7 @@ public class Employee {
         if (department != null && !department.trim().isEmpty()) {
             this.department = department;
         } else {
-            System.out.println("Invalid department");
+            log.log(Level.WARNING,"Invalid department");
         }
     }
 
@@ -223,7 +226,7 @@ public class Employee {
         if (id > 0) {
             this.id = id;
         } else {
-            System.out.println("Invalid ID");
+         log.log(Level.WARNING,"Invalid ID");
         }
     }
 
