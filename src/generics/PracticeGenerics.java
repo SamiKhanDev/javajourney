@@ -3,8 +3,8 @@ package generics;
 import java.util.ArrayList;
 
 public class PracticeGenerics {
-    public static<E> void eElements(Integer[] array){
-        for(int elements:array){
+    public static<E> void eElements(E[] array){
+        for( E elements:array){
             System.out.println(elements);
         }
     }
