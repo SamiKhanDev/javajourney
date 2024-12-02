@@ -1,5 +1,6 @@
 package database;
 
+import employee.Address;
 import employee.Employee;
 import java.sql.*;
 
@@ -36,10 +37,10 @@ public class DatabaseConnector {
         }
     }
 
-    public void insertEmployee(Employee employee) {
-        String sql = """
-        INSERT INTO employee (id, first_name, last_name, email, department, age, dob, permanent_address, temporary_address,phone_number)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    public void insertEmployee(Employee employee, Address address) {
+        String employeeSql = """
+        INSERT INTO employee (id, first_name, last_name, email, department, age, dob, phone_number)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
         ON DUPLICATE KEY UPDATE
         first_name = VALUES(first_name),
         last_name = VALUES(last_name),
@@ -47,36 +48,45 @@ public class DatabaseConnector {
         department = VALUES(department),
         age = VALUES(age),
         dob = VALUES(dob),
-        permanent_address = VALUES(permanent_address),
-        temporary_address = VALUES(temporary_address),
         phone_number = VALUES(phone_number)
-        """;
+    """;
+
+        String addressSql = """
+        INSERT INTO address (employee_id, permanent_address, temporary_address)
+        VALUES (?, ?, ?)
+        ON DUPLICATE KEY UPDATE
+        permanent_address = VALUES(permanent_address),
+        temporary_address = VALUES(temporary_address)
+    """;
+
         try (Connection connection = getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
+             PreparedStatement employeeStmt = connection.prepareStatement(employeeSql);
+             PreparedStatement addressStmt = connection.prepareStatement(addressSql)) {
 
-            statement.setInt(1, employee.getId());
-            statement.setString(2, employee.getFirstName());
-            statement.setString(3, employee.getLastName());
-            statement.setString(4, employee.getEmail());
-            statement.setString(5, employee.getDepartment());
-            statement.setInt(6, employee.getAge());
-            statement.setString(7, employee.getDob());
-            statement.setString(8, employee.getAddress().getPermanentAddress());
-            statement.setString(9, employee.getAddress().getTemporaryAddress());
-            statement.setLong(10, employee.getNumber());
+            // Employee insertion
+            employeeStmt.setInt(1, employee.getId());
+            employeeStmt.setString(2, employee.getFirstName());
+            employeeStmt.setString(3, employee.getLastName());
+            employeeStmt.setString(4, employee.getEmail());
+            employeeStmt.setString(5, employee.getDepartment());
+            employeeStmt.setInt(6, employee.getAge());
+            employeeStmt.setString(7, employee.getDob());
+            employeeStmt.setLong(8, employee.getNumber());
+            employeeStmt.executeUpdate();
 
+            // Address insertion
+            addressStmt.setInt(1, employee.getId());
+            addressStmt.setString(2, address.getPermanentAddress());
+            addressStmt.setString(3, address.getTemporaryAddress());
+            addressStmt.executeUpdate();
 
-            int rowsAffected = statement.executeUpdate();
-            if (rowsAffected == 1) {
-                System.out.println("New employee data inserted successfully!");
-            } else if (rowsAffected > 1) {
-                System.out.println("Existing employee data updated successfully!");
-            }
+            System.out.println("Employee and address data inserted/updated successfully!");
 
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
+
 
     public void updateEmployeeField(Employee employee, String fieldName, String newValue) {
         String sql = "";
@@ -158,7 +168,13 @@ public class DatabaseConnector {
 
 
     public void fetchEmployees() {
-        String sql = "SELECT * FROM employee";
+        String sql = """
+        SELECT e.id, e.first_name, e.last_name, e.email, e.department, e.age, e.dob, e.phone_number,
+               a.permanent_address, a.temporary_address
+        FROM employee e
+        LEFT JOIN address a ON e.id = a.employee_id
+    """;
+
         try (Connection connection = getConnection();
              PreparedStatement statement = connection.prepareStatement(sql);
              ResultSet resultSet = statement.executeQuery()) {
@@ -170,10 +186,10 @@ public class DatabaseConnector {
                 System.out.println("Email: " + resultSet.getString("email"));
                 System.out.println("Phone: " + resultSet.getString("phone_number"));
                 System.out.println("Department: " + resultSet.getString("department"));
-                System.out.println("age: " + resultSet.getInt("age"));
-                System.out.println("DOB : " + resultSet.getString("DOB"));
-
-
+                System.out.println("Age: " + resultSet.getInt("age"));
+                System.out.println("DOB: " + resultSet.getString("dob"));
+                System.out.println("Permanent Address: " + resultSet.getString("permanent_address"));
+                System.out.println("Temporary Address: " + resultSet.getString("temporary_address"));
                 System.out.println();
             }
 

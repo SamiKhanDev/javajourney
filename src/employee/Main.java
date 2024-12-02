@@ -63,6 +63,7 @@ public class Main {
 
     public static void addNewEmployee(Scanner input, PhoneValidationHelper helper, DatabaseConnector db) {
         Employee employee = new Employee();
+        Address address = new Address();
 
         log.info("\nEnter employee details:");
         employee.setId(Integer.parseInt(getValidInput(input, "ID: ", "\\d+", "ID must be numeric.")));
@@ -70,11 +71,11 @@ public class Main {
         employee.setLastName(getValidInput(input, "Last Name: ", "[a-zA-Z]+", "Only alphabets are allowed."));
         employee.setAge(Integer.parseInt(getValidInput(input, "Age: ", "\\d+", "Age must be a number.")));
         employee.setDepartment(getInput(input, "Department: "));
-        employee.getAddress().setPermanentAddress(getInput(input, "Permanent Address: "));
-        employee.getAddress().setTemporaryAddress(getInput(input, "Temporary Address: "));
+        address.setPermanentAddress(getInput(input, "Permanent Address: "));
+        address.setTemporaryAddress(getInput(input, "Temporary Address: "));
 
         while (true) {
-            System.out.print("Email: ");
+           log.info("Email: ");
             String email = input.nextLine();
             employee.setEmail(email);
             if (employee.getEmail() != null) break;
@@ -108,7 +109,7 @@ public class Main {
             }
         }
 
-        db.insertEmployee(employee);
+        db.insertEmployee(employee,address);
        log.info("Employee added successfully!");
     }
 
