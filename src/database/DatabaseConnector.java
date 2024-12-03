@@ -37,7 +37,7 @@ public class DatabaseConnector {
         }
     }
 
-    public void insertEmployee(Employee employee, Address address) {
+    public void insertEmployee(Employee employee, Address address, int departmentId) {
         String employeeSql = """
         INSERT INTO employee (id, first_name, last_name, email, department, age, dob, phone_number)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?)
@@ -59,11 +59,17 @@ public class DatabaseConnector {
         temporary_address = VALUES(temporary_address)
     """;
 
-        try (Connection connection = getConnection();
-             PreparedStatement employeeStmt = connection.prepareStatement(employeeSql);
-             PreparedStatement addressStmt = connection.prepareStatement(addressSql)) {
+        String linkSql = """
+        INSERT INTO employee_address_department (employee_id, address_id, department_id)
+        VALUES(?,?,?)
+    """;
 
-            // Employee insertion
+        try (Connection connection = getConnection();
+             PreparedStatement employeeStmt = connection.prepareStatement(employeeSql, Statement.RETURN_GENERATED_KEYS);
+             PreparedStatement addressStmt = connection.prepareStatement(addressSql, Statement.RETURN_GENERATED_KEYS);
+             PreparedStatement linkStmt = connection.prepareStatement(linkSql)) {
+
+            // Insert employee data
             employeeStmt.setInt(1, employee.getId());
             employeeStmt.setString(2, employee.getFirstName());
             employeeStmt.setString(3, employee.getLastName());
@@ -74,11 +80,34 @@ public class DatabaseConnector {
             employeeStmt.setLong(8, employee.getNumber());
             employeeStmt.executeUpdate();
 
-            // Address insertion
+            int employee_id = employee.getId();
+            if (employee_id == 0) {
+                try (ResultSet generatedKeys = employeeStmt.getGeneratedKeys()) {
+                    if (generatedKeys.next()) {
+                        employee_id = generatedKeys.getInt(1);
+                    }
+                }
+            }
+
+            // Insert address data
             addressStmt.setInt(1, employee.getId());
             addressStmt.setString(2, address.getPermanentAddress());
             addressStmt.setString(3, address.getTemporaryAddress());
             addressStmt.executeUpdate();
+
+            int address_id = 0;
+            try (ResultSet generatedKeys = addressStmt.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    address_id = generatedKeys.getInt(1);
+                }
+            }
+
+            if (address_id > 0) {
+                linkStmt.setInt(1, employee_id);
+                linkStmt.setInt(2, address_id);
+                linkStmt.setInt(3, departmentId);
+                linkStmt.executeUpdate();
+            }
 
             System.out.println("Employee and address data inserted/updated successfully!");
 
@@ -86,6 +115,7 @@ public class DatabaseConnector {
             e.printStackTrace();
         }
     }
+
 
 
     public void updateEmployeeField(Employee employee, String fieldName, String newValue) {
@@ -169,10 +199,16 @@ public class DatabaseConnector {
 
     public void fetchEmployees() {
         String sql = """
-        SELECT e.id, e.first_name, e.last_name, e.email, e.department, e.age, e.dob, e.phone_number,
-               a.permanent_address, a.temporary_address
-        FROM employee e
-        LEFT JOIN address a ON e.id = a.employee_id
+       SELECT e.id, e.first_name, e.last_name, e.email, e.age, e.dob, e.phone_number,
+              a.permanent_address, a.temporary_address,\s
+              GROUP_CONCAT(d.name) AS departments
+       FROM employee e
+       LEFT JOIN address a ON e.id = a.employee_id
+       LEFT JOIN employee_address_department ead ON e.id = ead.employee_id
+       LEFT JOIN department d ON ead.department_id = d.id
+       GROUP BY e.id, e.first_name, e.last_name, e.email, e.age, e.dob, e.phone_number,\s
+                a.permanent_address, a.temporary_address
+       
     """;
 
         try (Connection connection = getConnection();
@@ -185,11 +221,11 @@ public class DatabaseConnector {
                 System.out.println("Last Name: " + resultSet.getString("last_name"));
                 System.out.println("Email: " + resultSet.getString("email"));
                 System.out.println("Phone: " + resultSet.getString("phone_number"));
-                System.out.println("Department: " + resultSet.getString("department"));
                 System.out.println("Age: " + resultSet.getInt("age"));
                 System.out.println("DOB: " + resultSet.getString("dob"));
                 System.out.println("Permanent Address: " + resultSet.getString("permanent_address"));
                 System.out.println("Temporary Address: " + resultSet.getString("temporary_address"));
+                System.out.println("Departments: " + resultSet.getString("departments")); // Display associated departments
                 System.out.println();
             }
 
@@ -197,4 +233,5 @@ public class DatabaseConnector {
             e.printStackTrace();
         }
     }
+
 }

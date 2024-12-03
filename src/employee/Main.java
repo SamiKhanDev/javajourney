@@ -4,10 +4,10 @@ import database.DatabaseConnector;
 
 import java.util.Scanner;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class Main {
-    private static final Logger log = Logger.getLogger(Main.class.getName());
+  private static final org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(Main.class.getName());
+//    private static final Logger log = Logger.getLogger(Main.class.getName());
     public static void main(String[] args) {
         Scanner input = new Scanner(System.in);
         PhoneValidationHelper helper = new PhoneValidationHelper();
@@ -56,7 +56,7 @@ public class Main {
                     return;
 
                 default:
-                   log.log(Level.WARNING,"Invalid choice");
+                   log.warn("Invalid choice");
             }
         }
     }
@@ -94,7 +94,7 @@ public class Main {
             String countryCode = input.nextLine().toUpperCase();
 
             if (!countryCode.equals("PK")) {
-                log.log(Level.WARNING,"Only PK country code is supported.");
+                log.warn("Only PK country code is supported.");
                 continue;
             }
 
@@ -105,18 +105,21 @@ public class Main {
                 employee.setNumber(countryCode, phoneNumber);
                 break;
             } else {
-                log.log(Level.WARNING,"Invalid phone number format for " + countryCode + ". Please try again.");
+                log.warn("Invalid phone number format for " + countryCode + ". Please try again.");
             }
         }
 
-        db.insertEmployee(employee,address);
-       log.info("Employee added successfully!");
+
+            db.insertEmployee(employee, address, 1);
+
+
     }
 
     public static String getInput(Scanner input, String title) {
         System.out.print(title);
         return input.nextLine();
     }
+
 
     public static String getValidInput(Scanner input, String title, String regex, String errorMessage) {
         while (true) {
@@ -125,7 +128,7 @@ public class Main {
             if (value.matches(regex)) {
                 return value;
             }
-            log.log(Level.WARNING,"Invalid input. " + errorMessage);
+            log.warn("Invalid input. " + errorMessage);
         }
     }
 }
