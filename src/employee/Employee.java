@@ -1,5 +1,8 @@
 package employee;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDate;
@@ -14,7 +17,7 @@ public class Employee {
         return dob;
     }
 
-    private static final org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(Employee.class.getName());
+    private static final Logger log = LogManager.getLogger(Employee.class.getName());
 
 
     public boolean setDob(String dob) {

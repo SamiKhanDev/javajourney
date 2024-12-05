@@ -3,11 +3,10 @@ package employee;
 import database.DatabaseConnector;
 
 import java.util.Scanner;
-import java.util.logging.Level;
-
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 public class Main {
-  private static final org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(Main.class.getName());
-//    private static final Logger log = Logger.getLogger(Main.class.getName());
+    private static final Logger log = LogManager.getLogger(Main.class.getName());
     public static void main(String[] args) {
         Scanner input = new Scanner(System.in);
         PhoneValidationHelper helper = new PhoneValidationHelper();
@@ -63,7 +62,6 @@ public class Main {
 
     public static void addNewEmployee(Scanner input, PhoneValidationHelper helper, DatabaseConnector db) {
         Employee employee = new Employee();
-        Address address = new Address();
 
         log.info("\nEnter employee details:");
         employee.setId(Integer.parseInt(getValidInput(input, "ID: ", "\\d+", "ID must be numeric.")));
@@ -71,8 +69,8 @@ public class Main {
         employee.setLastName(getValidInput(input, "Last Name: ", "[a-zA-Z]+", "Only alphabets are allowed."));
         employee.setAge(Integer.parseInt(getValidInput(input, "Age: ", "\\d+", "Age must be a number.")));
         employee.setDepartment(getInput(input, "Department: "));
-        address.setPermanentAddress(getInput(input, "Permanent Address: "));
-        address.setTemporaryAddress(getInput(input, "Temporary Address: "));
+        Address address = getAddressDetails(input);
+
 
         while (true) {
            log.info("Email: ");
@@ -113,6 +111,19 @@ public class Main {
             db.insertEmployee(employee, address, 1);
 
 
+    }
+    public static Address getAddressDetails(Scanner input) {
+        Address address = new Address();
+
+        log.info("\nEnter address details:");
+        address.setStreetNumber(getInput(input, "Street Number: "));
+        address.setStreetName(getInput(input, "Street Name: "));
+        address.setCity(getInput(input, "City: "));
+        address.setState(getInput(input, "State: "));
+        address.setPostalCode(getValidInput(input, "Postal Code: ", "\\d+", "Postal Code must be numeric."));
+        address.setCountry(getInput(input, "Country: "));
+
+        return address;
     }
 
     public static String getInput(Scanner input, String title) {
