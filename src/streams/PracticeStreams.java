@@ -2,10 +2,19 @@ package streams;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 public class PracticeStreams {
     public static void main(String[] args) {
+        List<Employees> e = Arrays.asList(
+                new Employees("sami",23),
+                new Employees("ahmad",22),
+                new Employees("bari",30)
+        );
+
+      List<Employees> olderEmployees = e.stream().filter(f -> f.age>=30).collect(Collectors.toList());
+        System.out.println(olderEmployees);
         //here im using three streams in total
         List<Integer> nums = Arrays.asList(1,2,4,5,7,8,3);
         nums.stream().filter(n-> n%2==1)
