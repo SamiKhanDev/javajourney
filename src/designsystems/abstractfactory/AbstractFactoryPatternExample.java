@@ -1,8 +1,8 @@
-package abstractfactory;
-import abstractfactory.bank.Bank;
-import abstractfactory.factories.AbstractFactory;
-import abstractfactory.factories.FactoryCreator;
-import abstractfactory.loan.Loan;
+package designsystems.abstractfactory;
+import designsystems.abstractfactory.bank.Bank;
+import designsystems.abstractfactory.factories.AbstractFactory;
+import designsystems.abstractfactory.factories.FactoryCreator;
+import designsystems.abstractfactory.loan.Loan;
 
 import java.util.Scanner;
 

@@ -1,4 +1,4 @@
-package abstractfactory.loan;
+package designsystems.abstractfactory.loan;
 
 public class BuisnessLoan extends Loan{
     @Override

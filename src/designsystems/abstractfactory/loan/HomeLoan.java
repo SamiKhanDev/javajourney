@@ -1,6 +1,4 @@
-package abstractfactory.loan;
-
-import abstractfactory.loan.Loan;
+package designsystems.abstractfactory.loan;
 
 public class HomeLoan extends Loan {
     @Override

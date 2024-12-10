@@ -1,4 +1,4 @@
-package factorydesignsystem;
+package designsystems.abstractfactory.factorydesignsystem;
 
 public abstract class Plan {
     abstract void getRate();

@@ -30,7 +30,5 @@ public class PracticeStreams {
                 .map(n -> n/n)
                 .forEach(System.out::println);
 
-
-
     }
 }

@@ -1,4 +1,4 @@
-package abstractfactory.bank;
+package designsystems.abstractfactory.bank;
 
 public class Meezan implements Bank{
     private final String bankName;

@@ -1,4 +1,4 @@
-package factorydesignsystem;
+package designsystems.abstractfactory.factorydesignsystem;
 
 import java.util.Scanner;
 

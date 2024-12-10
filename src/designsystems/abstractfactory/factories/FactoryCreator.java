@@ -1,4 +1,4 @@
-package abstractfactory.factories;
+package designsystems.abstractfactory.factories;
 
 public class FactoryCreator {
      public static AbstractFactory getFactory(String choice){

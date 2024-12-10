@@ -1,10 +1,12 @@
-package abstractfactory.bank;
+package designsystems.abstractfactory.bank;
 
-public class Islamic implements Bank{
+public class HBL implements Bank{
     private final String bankName;
 
-    public Islamic() {
-        bankName = "Islamic";
+
+
+    public HBL() {
+        bankName = "HBL";
     }
 
     @Override

@@ -1,4 +1,4 @@
-package factorydesignsystem;
+package designsystems.abstractfactory.factorydesignsystem;
 
 public class InstitutationPlan extends Plan {
     @Override

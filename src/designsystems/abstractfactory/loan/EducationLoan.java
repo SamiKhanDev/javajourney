@@ -1,4 +1,4 @@
-package abstractfactory.loan;
+package designsystems.abstractfactory.loan;
 
 public class EducationLoan extends Loan{
     @Override

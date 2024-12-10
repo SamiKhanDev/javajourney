@@ -1,7 +1,7 @@
-package abstractfactory.factories;
+package designsystems.abstractfactory.factories;
 
-import abstractfactory.bank.*;
-import abstractfactory.loan.BuisnessLoan;
+import designsystems.abstractfactory.bank.*;
+import designsystems.abstractfactory.loan.BuisnessLoan;
 
 class BankFactory extends AbstractFactory {
    public Bank getBank(String bank){
